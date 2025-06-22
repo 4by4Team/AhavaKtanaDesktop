@@ -5,6 +5,8 @@ from datetime import datetime
 from openpyxl import load_workbook
 from typing import Union, List, Dict, Optional
 import logging as lg
+import re
+
 logger = lg.getLogger("OrderExport")
 logger.setLevel(lg.INFO)
 formatter = lg.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -111,6 +113,53 @@ def excel_to_json(excel_file_path: str, output_json_path: str = None) -> Union[L
     except Exception as e:
         logger.exception(f"Failed to convert Excel to JSON: {e}")
         return None
+
+
+def excel_to_json_filtered(excel_file_path: str, output_json_path: str = None) -> Union[List[Dict], None]:
+    """
+    קוראת קובץ אקסל וממירה אותו לרשימת אובייקטים בפורמט JSON,
+    אך רק עם שדות מסוימים בשם חדש ומותאם.
+    """
+    try:
+        wb = load_workbook(excel_file_path)
+        ws = wb.active
+
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows or len(rows) < 2:
+            logger.warning("Excel file is empty or missing data.")
+            return None
+
+        headers = rows[0]
+
+        # מיפוי של שמות העמודות המקוריים לשמות החדשים בפורמט קטן
+        field_mapping = {
+            "Business Partner Reference Number": "referenceNumber",
+            "Item Name": "itemName",
+            "Name": "name",
+            "Quantity": "quantity"
+        }
+
+        # מציאת אינדקסים של העמודות הרלוונטיות
+        header_indexes = {field_mapping[key]: headers.index(key) for key in field_mapping if key in headers}
+
+        filtered_data = []
+        for row in rows[1:]:
+            item = {
+                new_key: row[idx] for new_key, idx in header_indexes.items()
+            }
+            filtered_data.append(item)
+
+        if output_json_path:
+            with open(output_json_path, 'w', encoding='utf-8') as f:
+                json.dump(filtered_data, f, ensure_ascii=False, indent=2)
+            logger.info(f"Exported filtered JSON to {output_json_path}")
+
+        return filtered_data
+
+    except Exception as e:
+        logger.exception(f"Failed to convert Excel to filtered JSON: {e}")
+        return None
+
 
 def load_excel_headers(ws) -> Dict[str, int]:
     """מחזירה מילון של כותרות עמודות: שם → מספר עמודה (1-based)"""
@@ -234,7 +283,51 @@ def update_excel_column_by_dbid(
         print(f"Unexpected error: {e}")
 
 
+def extract_name_from_comments(comments: str) -> str:
+    """
+    מחלץ את שם הילד/ה מתוך מחרוזת התגובות.
+    """
+    pattern = r"שם הילד/ה שיודפס על גבי המדבקות:\s*(.*?)\s*תוספת מדבקות הגנה"
+    match = re.search(pattern, comments, re.DOTALL)
+    return match.group(1).strip() if match else ""
 
+
+def add_columns_from_existing_data(file_path: str, save_as: Optional[str] = None) -> None:
+    """
+    מוסיף עמודת 'Name' לקובץ אקסל, על בסיס נתונים מתוך העמודה 'Line Comments'.
+
+    :param file_path: הנתיב לקובץ המקורי
+    :param save_as: שם קובץ לשמירה (אם לא צוין - שומר על הקובץ המקורי)
+    """
+    wb = load_workbook(file_path)
+    ws = wb.active
+
+    # שליפת כותרות עמודות
+    headers = {cell.value: idx for idx, cell in enumerate(ws[1])}
+    required_column = "Line Comments"
+
+    if required_column not in headers:
+        raise ValueError(f"עמודת '{required_column}' לא קיימת בקובץ האקסל.")
+
+    line_comments_col = headers[required_column]
+
+    # הגדרת כותרות חדשות
+    new_columns = ["Name"]
+    start_col = len(headers) + 1  # האינדקס לעמודה החדשה הראשונה
+
+    # כתיבת כותרות חדשות
+    for offset, col_name in enumerate(new_columns):
+        ws.cell(row=1, column=start_col + offset, value=col_name)
+
+    # עיבוד השורות
+    for row_idx, row in enumerate(ws.iter_rows(min_row=2), start=2):
+        comments_cell = row[line_comments_col]
+        comments = str(comments_cell.value or "")
+        name = extract_name_from_comments(comments)
+        ws.cell(row=row_idx, column=start_col, value=name)
+
+    # שמירת הקובץ
+    wb.save(save_as or file_path)
 
 def main():
     file_path =r"C:\Users\USER\Desktop\אהבה קטנה 4X4\AhavaKtanaDesktop\excel\data\2025-06-15\orders_2025-06-15_1.xlsx"
@@ -257,7 +350,9 @@ def main():
         },
     )
 
-    
+    add_columns_from_existing_data(r"C:\Users\USER\Downloads\sticker.xlsx")
+    excel_to_json_filtered(r"C:\Users\USER\Downloads\sticker.xlsx",r"C:\Users\USER\Downloads\sticker.json")
+
 
 if __name__ == "__main__":
     main()
