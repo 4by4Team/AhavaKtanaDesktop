@@ -3,7 +3,7 @@ import json
 from openpyxl import Workbook
 from datetime import datetime
 from openpyxl import load_workbook
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Optional
 import logging as lg
 logger = lg.getLogger("OrderExport")
 logger.setLevel(lg.INFO)
@@ -112,3 +112,68 @@ def excel_to_json(excel_file_path: str, output_json_path: str = None) -> Union[L
         logger.exception(f"Failed to convert Excel to JSON: {e}")
         return None
 
+def load_excel_headers(ws) -> Dict[str, int]:
+    """מחזירה מילון של כותרות עמודות: שם → מספר עמודה (1-based)"""
+    return {cell.value: idx for idx, cell in enumerate(ws[1], start=1)}
+
+
+def find_row_by_dbid(ws, dbid: Union[int, str], dbid_col_idx: int):
+    """מחפשת את השורה שמכילה את ה־dbId הנתון"""
+    for row in ws.iter_rows(min_row=2):
+        if str(row[dbid_col_idx - 1].value) == str(dbid):
+            return row
+    return None
+
+
+def update_excel_row_by_dbid(
+    file_path: str,
+    dbid: Union[int, str],
+    updates: Dict[str, Union[str, int, float]],
+    save_as: Optional[str] = None
+) -> None:
+    """
+    מעדכנת ערכים בעמודות מסוימות בשורה שמזוהה לפי dbId.
+
+    :param file_path: נתיב לקובץ האקסל
+    :param dbid: מזהה ייחודי של השורה לעדכון (מתוך העמודה dbId)
+    :param updates: מילון {שם עמודה: ערך חדש}
+    :param save_as: נתיב לשמירה בקובץ חדש (אם לא מצוין - דריסה)
+    """
+    try:
+        wb = load_workbook(file_path)
+        ws = wb.active
+
+        headers = load_excel_headers(ws)
+
+        if "dbId" not in headers:
+            raise ValueError("Missing required column: 'dbId'")
+
+        dbid_col_idx = headers["dbId"]
+        target_row = find_row_by_dbid(ws, dbid, dbid_col_idx)
+
+        if target_row is None:
+            msg = f"dbId {dbid} not found in file."
+            logger.warning(msg)
+            print(msg)
+            return
+
+        for column, new_value in updates.items():
+            if column not in headers:
+                raise ValueError(f"Column '{column}' not found in file.")
+            col_idx = headers[column]
+            target_row[col_idx - 1].value = new_value
+            logger.info(f"dbId={dbid}: '{column}' updated to '{new_value}'")
+
+        output_path = save_as or file_path
+        wb.save(output_path)
+        logger.info(f"File saved: {output_path}")
+        print(f"Row with dbId={dbid} updated successfully.")
+
+    except FileNotFoundError:
+        msg = f"File not found: {file_path}"
+        logger.error(msg)
+        print(f"Error: {msg}")
+
+    except Exception as e:
+        logger.exception("Unexpected error occurred while updating row.")
+        print(f"Unexpected error: {e}")
