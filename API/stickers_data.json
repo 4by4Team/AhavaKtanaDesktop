@@ -1,0 +1,67 @@
+[
+  {
+    "dbId": 12345,
+    "referenceNumber": "204872",
+    "partnerName": "מיכאלה",
+    "quantity": 2,
+    "itemName": "מדבקות שם - קשת בענן",
+    "lineComments": "שם: דניאל",
+    "createdOn": "2025-05-22",
+    "graphicStatus": "NotStarted",
+    "orderStatus": "Pending",
+    "model": "90x52",
+    "productType": "sticker"
+  },
+  {
+    "dbId": 12346,
+    "referenceNumber": "204873",
+    "partnerName": "רות",
+    "quantity": 1,
+    "itemName": "מדבקות שם - כוכבים",
+    "lineComments": "שם: אביגיל",
+    "createdOn": "2025-05-23",
+    "graphicStatus": "InProgress",
+    "orderStatus": "Confirmed",
+    "model": "90x52",
+    "productType": "sticker"
+  },
+  {
+    "dbId": 12347,
+    "referenceNumber": "204874",
+    "partnerName": "שירה",
+    "quantity": 4,
+    "itemName": "מחברת חשבון - דגם ינשוף",
+    "lineComments": "",
+    "createdOn": "2025-05-24",
+    "graphicStatus": "Completed",
+    "orderStatus": "Shipped",
+    "model": "A5",
+    "productType": "notebook"
+  },
+  {
+    "dbId": 12348,
+    "referenceNumber": "204875",
+    "partnerName": "טליה",
+    "quantity": 3,
+    "itemName": "מדבקות שם - פרחים",
+    "lineComments": "שם: תמר",
+    "createdOn": "2025-05-25",
+    "graphicStatus": "Completed",
+    "orderStatus": "Pending",
+    "model": "60x40",
+    "productType": "sticker"
+  },
+  {
+    "dbId": 12349,
+    "referenceNumber": "204876",
+    "partnerName": "רבקה",
+    "quantity": 5,
+    "itemName": "עטים צבעוניים - סט 6 יח'",
+    "lineComments": "",
+    "createdOn": "2025-05-26",
+    "graphicStatus": "N/A",
+    "orderStatus": "Delivered",
+    "model": null,
+    "productType": "pen"
+  }
+]
