@@ -177,3 +177,87 @@ def update_excel_row_by_dbid(
     except Exception as e:
         logger.exception("Unexpected error occurred while updating row.")
         print(f"Unexpected error: {e}")
+
+
+def update_excel_column_by_dbid(
+    file_path: str,
+    dbids_to_update: List[Union[str, int]],
+    column_name: str,
+    new_value: str,
+    save_as: str = None
+) -> None:
+    """
+    מעדכנת עמודה לפי dbId ברשומות שנבחרו
+
+    :param file_path: נתיב לקובץ אקסל
+    :param dbids_to_update: רשימת מזהים (dbId) לעדכון
+    :param column_name: שם העמודה לעדכון (לפי כותרת בטור)
+    :param new_value: ערך חדש שיוזן
+    :param save_as: שם קובץ לשמירה (אם None, ידרוס את הקיים)
+    """
+    try:
+        wb = load_workbook(file_path)
+        ws = wb.active
+
+        headers = {cell.value: idx for idx, cell in enumerate(ws[1], start=1)}
+        if column_name not in headers or "dbId" not in headers:
+            error_msg = f"Missing columns: dbId or {column_name}"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        col_idx = headers[column_name]
+        dbid_idx = headers["dbId"]
+
+        updated_rows = 0
+        for row in ws.iter_rows(min_row=2):
+            dbid_cell = row[dbid_idx - 1].value
+            if str(dbid_cell) in map(str, dbids_to_update):
+                row[col_idx - 1].value = new_value
+                updated_rows += 1
+
+        if save_as:
+            wb.save(save_as)
+            logger.info(f"File saved as {save_as}")
+        else:
+            wb.save(file_path)
+            logger.info(f"File overwritten: {file_path}")
+
+        logger.info(f"{updated_rows} rows updated successfully (column: {column_name})")
+        print(f"{updated_rows} rows updated successfully.")
+
+    except FileNotFoundError:
+        logger.error(f"File not found: {file_path}")
+        print(f"Error: File not found: {file_path}")
+
+    except Exception as e:
+        logger.exception("An unexpected error occurred while updating Excel.")
+        print(f"Unexpected error: {e}")
+
+
+
+
+def main():
+    file_path =r"C:\Users\USER\Desktop\אהבה קטנה 4X4\AhavaKtanaDesktop\excel\data\2025-06-15\orders_2025-06-15_1.xlsx"
+    dbids = [12345, 12347]  # דוגמה למזהים שברצונך לעדכן
+    column = "graphicStatus"
+    new_value = "lali"
+
+    update_excel_column_by_dbid(
+        file_path=file_path,
+        dbids_to_update=dbids,
+        column_name=column,
+        new_value=new_value,
+    )
+    update_excel_row_by_dbid(
+        file_path=file_path,
+        dbid=12345,
+        updates={
+            "graphicStatus": "Lali",
+            "orderStatus": "Lali"
+        },
+    )
+
+    
+
+if __name__ == "__main__":
+    main()
