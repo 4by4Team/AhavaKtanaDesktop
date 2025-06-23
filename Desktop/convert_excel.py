@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton, QMessageBox, QFileDialog, QCheckBox, QTableWidget,
-    QTableWidgetItem, QHeaderView
+    QTableWidgetItem, QHeaderView, QHBoxLayout
 )
 from PyQt6.QtCore import Qt
+
 
 class ConvertExcelPage(QWidget):
     def __init__(self):
@@ -11,20 +12,33 @@ class ConvertExcelPage(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout()
+        top_buttons_layout = QHBoxLayout()
 
-        self.load_btn = QPushButton("\ud83d\udcc1 Load Excel File")
-        self.load_btn.setToolTip("Select an Excel file to load")
+        self.back_btn = QPushButton("⬅️ חזרה")
+        self.back_btn.setFixedWidth(100)
+        self.back_btn.clicked.connect(self.go_back)
+
+        self.load_btn = QPushButton("📁 בחר קובץ אקסל")
+        self.load_btn.setFixedHeight(40)
+        self.load_btn.setFixedWidth(200)
         self.load_btn.clicked.connect(self.load_excel)
 
-        self.table = QTableWidget()
-        self.table.setColumnCount(0)
+        top_buttons_layout.addWidget(self.back_btn)
+        top_buttons_layout.addStretch()  # מוסיף רווח דינמי בין הכפתורים
+        top_buttons_layout.addWidget(self.load_btn)
 
-        self.update_btn = QPushButton("\u270f\ufe0f Update Selected Rows")
-        self.update_btn.setToolTip("Apply updates to selected rows")
+        self.select_all_checkbox = QCheckBox("בחר/י את כל השורות")
+        self.select_all_checkbox.stateChanged.connect(self.toggle_all_checkboxes)
+
+        self.table = QTableWidget()
+
+        self.update_btn = QPushButton("✏️ עדכן נתונים")
         self.update_btn.clicked.connect(self.update_rows)
 
-        layout.addWidget(self.load_btn)
+
+        layout.addLayout(top_buttons_layout)
         layout.addWidget(self.table)
+        layout.addWidget(self.select_all_checkbox)
         layout.addWidget(self.update_btn)
 
         self.setLayout(layout)
@@ -48,10 +62,21 @@ class ConvertExcelPage(QWidget):
         for row_idx, row in enumerate(data):
             for col_idx, key in enumerate(headers):
                 item = QTableWidgetItem(str(row[key]))
-                item.setFlags(item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+                item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable)
                 self.table.setItem(row_idx, col_idx, item)
             chk = QCheckBox()
             self.table.setCellWidget(row_idx, len(headers), chk)
 
     def update_rows(self):
         QMessageBox.information(self, "Updated", "Rows updated successfully")
+
+
+    def go_back(self):
+        # כאן צרי callback בעתיד למעבר בין עמודים
+        self.close()  # או emit signal
+
+    def toggle_all_checkboxes(self, state):
+        for row in range(self.table.rowCount()):
+            checkbox = self.table.cellWidget(row, self.table.columnCount() - 1)
+            if checkbox:
+                checkbox.setChecked(state == Qt.CheckState.Checked)

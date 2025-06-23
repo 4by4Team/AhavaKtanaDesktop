@@ -1,30 +1,112 @@
 QWidget {
-    background-color: #1b2a41;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
 }
 
+/* שדות טקסט */
 QLineEdit {
-    background-color: #fff;
+    background-color: #ffffff;
     border: 1px solid #ccc;
     border-radius: 6px;
     padding: 6px 10px;
     font-size: 14px;
 }
 QLineEdit:focus {
-    border: 1px solid #ef6c57;
+    border: 1px solid #D2A470;
+    background-color: #fdf8f3;
 }
 
+/* כפתורים */
 QPushButton {
-    background-color: #ef6c57;
-    color: white;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 14px;
+    background-color: #D2A679;
+    color: black;
     font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #a07b50;
 }
 QPushButton:hover {
-    background-color: #d6523b;
+    background-color: #e6c8a0;
 }
 QPushButton:pressed {
-    background-color: #bf3d28;
+    background-color: #c89c60;
+}
+
+/* טבלה */
+QTableWidget {
+    background-color: #ffffff;
+    gridline-color: #000000;
+    border: 1px solid #d2a679;
+}
+QTableWidget::item {
+    padding: 5px;
+}
+QHeaderView::section {
+    background-color: #d2a679;
+    color: black;
+    font-weight: bold;
+    border: 1px solid #a07b50;
+}
+
+/* צ'קבוקס */
+QCheckBox {
+    spacing: 5px;
+}
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+}
+QCheckBox::indicator:unchecked {
+    background-color: #ffffff;
+    border: 1px solid #a07b50;
+}
+QCheckBox::indicator:checked {
+    background-color: #d2a679;
+    border: 1px solid #a07b50;
+}
+
+/* תיבת בחירה */
+QComboBox {
+    background-color: #ffffff;
+    border: 1px solid #a07b50;
+    border-radius: 6px;
+    padding: 5px;
+}
+QComboBox::drop-down {
+    border-left: 1px solid #a07b50;
+}
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    selection-background-color: #d2a679;
+}
+
+/* הודעות פופאפ (QMessageBox) */
+QMessageBox {
+    background-color: #ffffff;
+}
+QMessageBox QLabel {
+    color: #000000;
+}
+QMessageBox QPushButton {
+    background-color: #D2A679;
+    color: black;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+/* גלילה */
+QScrollBar:vertical, QScrollBar:horizontal {
+    background: #ffffff;
+    border: 1px solid #d2a679;
+    width: 12px;
+}
+QScrollBar::handle {
+    background: #d2a679;
+    border-radius: 6px;
+}
+QScrollBar::handle:hover {
+    background: #e6c8a0;
 }

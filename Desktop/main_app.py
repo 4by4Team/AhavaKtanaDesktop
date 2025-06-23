@@ -7,7 +7,7 @@ from Desktop.create_excel import CreateExcelPage
 from Desktop.convert_excel import ConvertExcelPage
 
 def load_styles(app):
-    with open("../assets/style.qss", "r") as f:
+    with open("../assets/style.qss", "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
 
 class MainApp(QStackedWidget):
