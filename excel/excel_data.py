@@ -15,3 +15,4 @@ def excel_to_dict(file_path: str) -> List[Dict[str, str]]:
         data.append(row_dict)
 
     return data
+
