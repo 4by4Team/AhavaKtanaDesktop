@@ -17,90 +17,15 @@ def setup_logger(log_dir: str) -> None:
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-def excel_to_json(excel_file_path: str, output_json_path: str = None) -> Union[List[Dict], None]:
-
-    try:
-        wb = load_workbook(excel_file_path)
-        ws = wb.active
-
-        rows = list(ws.iter_rows(values_only=True))
-        if not rows or len(rows) < 2:
-            logger.warning("Excel file is empty or missing data.")
-            return None
-
-        headers = rows[0]
-        data = [dict(zip(headers, row)) for row in rows[1:]]
-
-        if output_json_path:
-            with open(output_json_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            logger.info(f"Exported JSON to {output_json_path}")
-
-        return data
-
-    except Exception as e:
-        logger.exception(f"Failed to convert Excel to JSON: {e}")
-        return None
-
-
-def excel_to_json_filtered(excel_file_path: str, output_json_path: str = None) -> Union[List[Dict], None]:
-    """
-    קוראת קובץ אקסל וממירה אותו לרשימת אובייקטים בפורמט JSON,
-    אך רק עם שדות מסוימים בשם חדש ומותאם.
-    """
-    try:
-        wb = load_workbook(excel_file_path)
-        ws = wb.active
-
-        rows = list(ws.iter_rows(values_only=True))
-        if not rows or len(rows) < 2:
-            logger.warning("Excel file is empty or missing data.")
-            return None
-
-        headers = rows[0]
-
-        # מיפוי של שמות העמודות המקוריים לשמות החדשים בפורמט קטן
-        field_mapping = {
-            "Business Partner Reference Number": "referenceNumber",
-            "Item Name": "itemName",
-            "Name": "name",
-            "Quantity": "quantity"
-        }
-
-        # מציאת אינדקסים של העמודות הרלוונטיות
-        header_indexes = {field_mapping[key]: headers.index(key) for key in field_mapping if key in headers}
-
-        filtered_data = []
-        for row in rows[1:]:
-            item = {
-                new_key: row[idx] for new_key, idx in header_indexes.items()
-            }
-            filtered_data.append(item)
-
-        if output_json_path:
-            with open(output_json_path, 'w', encoding='utf-8') as f:
-                json.dump(filtered_data, f, ensure_ascii=False, indent=2)
-            logger.info(f"Exported filtered JSON to {output_json_path}")
-
-        return filtered_data
-
-    except Exception as e:
-        logger.exception(f"Failed to convert Excel to filtered JSON: {e}")
-        return None
-
 
 def extract_type_details(line_item: str) -> Optional[str]:
-    """
-    מחלץ את שם הדגם והכמות מתוך שורת תיאור מוצר.
-    מחזיר מחרוזת בפורמט: <design>_<quantity>
-    """
     if not line_item or not isinstance(line_item, str):
         return None
 
     line_item = line_item.strip()
 
     # תבנית 1: מדבקות שם - חברים - סט מדבקות 52+90
-    pattern1 = r"^מדבקות שם\s*-\s*(?P<design>.+?)\s*-\s*(?:סט\s+מדבקות\s*)?(?P<quantity>\d+(?:\+\d+)?)"
+    pattern1 = r"^מדבקות שם(?:\s*-\s*.+)*?\s*-\s*(?P<design>[^-]+?)\s*-\s*(?:סט\s+מדבקות\s*)?(?P<quantity>\d+(?:\+\d+)?)"
 
     # תבנית 2: מדבקות שם קטנות במיוחד - ברקע חד קרן ללא איורים
     pattern2 = r"ברקע\s+(?P<design>.+?)\s+ללא\s+איורים"
@@ -131,10 +56,38 @@ def extract_type_details(line_item: str) -> Optional[str]:
     return None
 
 
+def extract_name_details(line_item: str) -> Optional[str]:
+
+    if not line_item:
+        return None
+
+    match = re.search(
+        r"שם היל[ד|ד/ה|דה|דה/ה]* שיודפס על גבי המדבקות:\s*(.+?)\s*(?:\n|$)",
+        line_item,
+        re.IGNORECASE
+    )
+    if match:
+        name = match.group(1).strip()
+        return name if name else None
+
+    return " "
+
+
+def split_item_variants(item: Dict) -> List[Dict]:
+
+    item_name = item.get("itemName", "")
+    if isinstance(item_name, str) and "_52+90" in item_name:
+        base_name = item_name.replace("_52+90", "")
+        item_52 = item.copy()
+        item_52["itemName"] = f"{base_name}_52"
+        item_90 = item.copy()
+        item_90["itemName"] = f"{base_name}_90"
+        return [item_52, item_90]
+    return [item]
 
 
 
-def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -> Union[List[Dict], None]:
+def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -> list[list[dict]] | None:
 
     try:
         wb=load_workbook(excel_file_path)
@@ -151,6 +104,7 @@ def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -
             "Business Partner Reference Number": "referenceNumber",
             "Item Name": "itemName",
             "Quantity": "quantity",
+            "Line Comments":"name"
         }
 
         header_indexes = {field_mapping[key]: headers.index(key) for key in field_mapping if key in headers}
@@ -161,12 +115,20 @@ def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -
                 new_key: row[idx] for new_key, idx in header_indexes.items() if idx < len(row)
             }
 
-            item_line_raw = item.get("itemName")
-            item_details = extract_type_details(item_line_raw)
+            item_line_raw_type = item.get("itemName")
+            item_details = extract_type_details(item_line_raw_type)
             if item_details:
                 item["itemName"] = item_details
 
-            filtered_data.append(item)
+            item_line_raw_name = item.get("name")
+            item_name=extract_name_details(item_line_raw_name)
+            if item_name:
+                item["name"]=item_name
+            else:
+                item["name"]=" "
+
+            final_item= split_item_variants(item)
+            filtered_data.append(final_item)
 
 
         if output_json_path:
@@ -183,4 +145,4 @@ def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -
 
 
 if __name__ == '__main__':
-    excel_to_filtered_json(r"C:\Users\USER\Downloads\sticker.xlsx",r"C:\Users\USER\Downloads\sticker.json")
+    excel_to_filtered_json(r"C:\Users\USER\Downloads\sticker.xlsx",r"C:\Users\USER\Downloads\sticker52.json")
