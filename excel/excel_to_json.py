@@ -87,7 +87,7 @@ def split_item_variants(item: Dict) -> List[Dict]:
 
 
 
-def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -> list[list[dict]] | None:
+def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
 
     try:
         wb=load_workbook(excel_file_path)
@@ -130,7 +130,8 @@ def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -
             final_item= split_item_variants(item)
             filtered_data.append(final_item)
 
-
+        base_name = os.path.splitext(excel_file_path)[0]
+        output_json_path = base_name + ".json"
         if output_json_path:
             with open(output_json_path, 'w', encoding='utf-8') as f:
                 json.dump(filtered_data, f, ensure_ascii=False, indent=2)
@@ -145,4 +146,4 @@ def excel_to_filtered_json(excel_file_path: str, output_json_path: str = None) -
 
 
 if __name__ == '__main__':
-    excel_to_filtered_json(r"C:\Users\USER\Downloads\sticker.xlsx",r"C:\Users\USER\Downloads\sticker52.json")
+    excel_to_filtered_json(r"C:\Users\USER\Downloads\sticker.xlsx")
