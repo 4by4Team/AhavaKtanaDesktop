@@ -106,12 +106,21 @@ class ConvertExcelPage(QWidget):
             QMessageBox.warning(self, "שגיאה", "לא נבחר קובץ אקסל")
             return
         try:
-             excel_to_filtered_json(self.excel_path)
+            data = excel_to_filtered_json(self.excel_path)
+            if data:
+                QMessageBox.information(self, "הצלחה", "✅ הקובץ הומר ונשמר בהצלחה")
+            else:
+                QMessageBox.warning(self, "שגיאה", "❌ ההמרה נכשלה – לא נוצרו נתונים")
         except Exception as e:
             QMessageBox.critical(self, "שגיאה", f"שגיאה בהמרה:\n{e}")
 
     def go_back(self, event):
+        self.excel_path = None
+        self.table.clearContents()
+        self.table.setRowCount(0)
+        self.table.setColumnCount(0)
+        self.table.hide()
+        self.empty_label.show()
         self.go_back_requested.emit()
-
 
 
