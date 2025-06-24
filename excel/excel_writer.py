@@ -89,76 +89,7 @@ def save_orders_to_excel( orders: Union[str, List[Dict]],
         logger.exception(f"Unexpected error occurred: {e}")
         return False
 
-def excel_to_json(excel_file_path: str, output_json_path: str = None) -> Union[List[Dict], None]:
 
-    try:
-        wb = load_workbook(excel_file_path)
-        ws = wb.active
-
-        rows = list(ws.iter_rows(values_only=True))
-        if not rows or len(rows) < 2:
-            logger.warning("Excel file is empty or missing data.")
-            return None
-
-        headers = rows[0]
-        data = [dict(zip(headers, row)) for row in rows[1:]]
-
-        if output_json_path:
-            with open(output_json_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            logger.info(f"Exported JSON to {output_json_path}")
-
-        return data
-
-    except Exception as e:
-        logger.exception(f"Failed to convert Excel to JSON: {e}")
-        return None
-
-
-def excel_to_json_filtered(excel_file_path: str, output_json_path: str = None) -> Union[List[Dict], None]:
-    """
-    קוראת קובץ אקסל וממירה אותו לרשימת אובייקטים בפורמט JSON,
-    אך רק עם שדות מסוימים בשם חדש ומותאם.
-    """
-    try:
-        wb = load_workbook(excel_file_path)
-        ws = wb.active
-
-        rows = list(ws.iter_rows(values_only=True))
-        if not rows or len(rows) < 2:
-            logger.warning("Excel file is empty or missing data.")
-            return None
-
-        headers = rows[0]
-
-        # מיפוי של שמות העמודות המקוריים לשמות החדשים בפורמט קטן
-        field_mapping = {
-            "Business Partner Reference Number": "referenceNumber",
-            "Item Name": "itemName",
-            "Name": "name",
-            "Quantity": "quantity"
-        }
-
-        # מציאת אינדקסים של העמודות הרלוונטיות
-        header_indexes = {field_mapping[key]: headers.index(key) for key in field_mapping if key in headers}
-
-        filtered_data = []
-        for row in rows[1:]:
-            item = {
-                new_key: row[idx] for new_key, idx in header_indexes.items()
-            }
-            filtered_data.append(item)
-
-        if output_json_path:
-            with open(output_json_path, 'w', encoding='utf-8') as f:
-                json.dump(filtered_data, f, ensure_ascii=False, indent=2)
-            logger.info(f"Exported filtered JSON to {output_json_path}")
-
-        return filtered_data
-
-    except Exception as e:
-        logger.exception(f"Failed to convert Excel to filtered JSON: {e}")
-        return None
 
 
 def load_excel_headers(ws) -> Dict[str, int]:
