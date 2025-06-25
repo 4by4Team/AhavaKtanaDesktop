@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import font, ttk
+from tkinter import font
 import tkinter.messagebox as messagebox
 
 
