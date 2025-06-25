@@ -57,7 +57,7 @@ def extract_type_details(line_item: str) -> Optional[str]:
 
 def extract_name_details(line_item: str) -> Optional[str]:
 
-    if not line_item:
+    if line_item is None:
         return None
 
     match = re.search(
@@ -67,7 +67,7 @@ def extract_name_details(line_item: str) -> Optional[str]:
     )
     if match:
         name = match.group(1).strip()
-        return name if name else None
+        return name if name else " "
 
     return " "
 
