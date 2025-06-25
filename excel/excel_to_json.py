@@ -6,7 +6,6 @@ from typing import Union, List, Dict, Optional
 from openpyxl import load_workbook
 import logging as lg
 
-
 logger = lg.getLogger("OrderExport")
 logger.setLevel(lg.INFO)
 formatter = lg.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -146,4 +145,4 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
 
 
 if __name__ == '__main__':
-    excel_to_filtered_json(r"C:\Users\USER\Downloads\sticker.xlsx")
+    excel_to_filtered_json(r"C:\Users\USER\Downloads\Expected_Goods_Shipment_25_06_2025.xlsx")
