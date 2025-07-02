@@ -127,7 +127,7 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
                 item["name"]=" "
 
             final_item= split_item_variants(item)
-            filtered_data.append(final_item)
+            filtered_data.extend(final_item)
 
         base_name = os.path.splitext(excel_file_path)[0]
         output_json_path = base_name + ".json"
