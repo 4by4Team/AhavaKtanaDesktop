@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton
-from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt6.QtGui import QMovie, QCursor
+from PyQt6.QtCore import Qt, QSize
+
 
 class HomePage(QWidget):
     def __init__(self, switch_to_create_callback, switch_to_convert_callback):
@@ -9,20 +10,61 @@ class HomePage(QWidget):
         self.switch_convert = switch_to_convert_callback
         self.init_ui()
 
+    def create_gif_button(self, gif_path: str, text: str, callback):
+        # וידג'ט חיצוני (הכפתור)
+        outer_widget = QWidget()
+        outer_widget.setFixedSize(300, 250)
+        outer_widget.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        outer_widget.setObjectName("gifButton")  # חשוב: מזהה CSS ייחודי
+
+        # עיצוב למסגרת בלבד
+        outer_widget.setStyleSheet("""
+            #gifButton {
+                background-color: white;
+                border: 2px solid #008080;
+                border-radius: 12px;
+            }
+        """)
+
+        # פריסת עמודה למלבן כולו
+        outer_layout = QVBoxLayout()
+        outer_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        outer_layout.setSpacing(10)
+
+        # תוכן פנימי – gif + טקסט
+        gif_label = QLabel()
+        gif_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        movie = QMovie(gif_path)
+        movie.setScaledSize(QSize(64, 64))
+        gif_label.setMovie(movie)
+        movie.start()
+
+        text_label = QLabel(text)
+        text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        text_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #008080;")
+
+        outer_layout.addWidget(gif_label)
+        outer_layout.addWidget(text_label)
+        outer_widget.setLayout(outer_layout)
+
+        # לחיצה על הכפתור
+        outer_widget.mousePressEvent = lambda event: callback()
+
+        return outer_widget
+
     def init_ui(self):
-        layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        main_layout = QVBoxLayout()
+        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        btn1 = QPushButton("\ud83d\udcc4 Create Excel from API")
-        btn1.setIcon(QIcon.fromTheme("fa-solid fa-file-import"))
-        btn1.setToolTip("Create new Excel files using API data")
-        btn1.clicked.connect(self.switch_create)
+        buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(30)
+        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        btn2 = QPushButton("\ud83d\udd04 Convert & Update Excel")
-        btn2.setIcon(QIcon.fromTheme("fa-solid fa-file-export"))
-        btn2.setToolTip("Upload, update and convert Excel files")
-        btn2.clicked.connect(self.switch_convert)
+        btn1 = self.create_gif_button("../assets/gif/download.gif", "Create Excel", self.switch_create)
+        btn2 = self.create_gif_button("../assets/gif/copy.gif", "Convert & Update", self.switch_convert)
 
-        layout.addWidget(btn1)
-        layout.addWidget(btn2)
-        self.setLayout(layout)
+        buttons_layout.addWidget(btn1)
+        buttons_layout.addWidget(btn2)
+
+        main_layout.addLayout(buttons_layout)
+        self.setLayout(main_layout)
