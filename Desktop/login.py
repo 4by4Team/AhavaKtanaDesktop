@@ -11,7 +11,6 @@ class LoginPage(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setStyleSheet("background-color: #1b2a41;")
 
         self.setFont(QFont("Segoe UI", 12))
 
@@ -20,6 +19,7 @@ class LoginPage(QWidget):
         container.setStyleSheet("""
             QFrame {
                 background-color: white;
+                border: 2px solid #40E0D0;
                 border-radius: 12px;
                 padding: 20px;
             }
@@ -27,21 +27,17 @@ class LoginPage(QWidget):
         container_layout = QVBoxLayout()
         container_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # לוגו
         logo = QLabel()
-        pixmap = QPixmap("../assets/logo.jpg")
+        pixmap = QPixmap("../assets/logo.png")
         pixmap = pixmap.scaledToHeight(60, Qt.TransformationMode.SmoothTransformation)
         logo.setPixmap(pixmap)
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        container_layout.addWidget(logo)
 
 
         title_label = QLabel("LOGIN TO YOUR ACCOUNT")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_label.setStyleSheet("font-size: 20px; font-weight: bold; margin: 3px; color: #222;")
-        container_layout.addWidget(title_label)
+        title_label.setStyleSheet("font-size: 20px; font-weight: bold; margin: 3px; color: #008080;")
 
-        # שדות
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("User Name *")
         self.username_input.setToolTip("Enter your username")
@@ -63,7 +59,6 @@ class LoginPage(QWidget):
         self.confirm_btn.setVisible(False)
         self.confirm_btn.clicked.connect(self.confirm_login)
 
-        # הוספת רכיבים לתוך הקופסה
         for widget in [
             self.username_input, self.password_input, self.login_btn,
             self.code_input, self.confirm_btn
@@ -71,30 +66,19 @@ class LoginPage(QWidget):
             widget.setMinimumWidth(250)
             widget.setMaximumWidth(300)
             widget.setFixedHeight(40)
-            widget.setStyleSheet("""
-                QLineEdit, QPushButton {
-                    font-size: 14px;
-                    border-radius: 8px;
-                }
-                QPushButton {
-                    background-color: #ef6c57;
-                    color: white;
-                    font-weight: bold;
-                }
-                QPushButton:hover {
-                    background-color: #d6523b;
-                }
-                QPushButton:pressed {
-                    background-color: #bf3d28;
-                }
-            """)
+            widget.setStyleSheet("")
             container_layout.addWidget(widget)
             container_layout.addSpacing(10)
+
 
         container.setLayout(container_layout)
 
         main_layout = QVBoxLayout()
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        main_layout.addWidget(logo)
+        main_layout.addWidget(title_label)
+
         main_layout.addWidget(container)
 
         self.setLayout(main_layout)
