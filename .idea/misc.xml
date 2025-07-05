@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-<<<<<<< HEAD
-    <option name="sdkName" value="Python 3.12 (AhavaKtanaDesktop)" />
-=======
-    <option name="sdkName" value="Python 3.12 (LearningTest)" />
->>>>>>> excel_logic
+    <option name="sdkName" value="Python 3.12" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (LearningTest)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
 </project>
