@@ -6,7 +6,6 @@ from typing import Union, List, Dict, Optional
 from openpyxl import load_workbook
 import logging as lg
 
-
 logger = lg.getLogger("OrderExport")
 logger.setLevel(lg.INFO)
 formatter = lg.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -58,7 +57,7 @@ def extract_type_details(line_item: str) -> Optional[str]:
 
 def extract_name_details(line_item: str) -> Optional[str]:
 
-    if not line_item:
+    if line_item is None:
         return None
 
     match = re.search(
@@ -68,7 +67,7 @@ def extract_name_details(line_item: str) -> Optional[str]:
     )
     if match:
         name = match.group(1).strip()
-        return name if name else None
+        return name if name else " "
 
     return " "
 
@@ -128,7 +127,7 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
                 item["name"]=" "
 
             final_item= split_item_variants(item)
-            filtered_data.append(final_item)
+            filtered_data.extend(final_item)
 
         base_name = os.path.splitext(excel_file_path)[0]
         output_json_path = base_name + ".json"
@@ -146,4 +145,4 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
 
 
 if __name__ == '__main__':
-    excel_to_filtered_json(r"C:\Users\USER\Downloads\sticker.xlsx")
+    excel_to_filtered_json(r"C:\Users\USER\Downloads\Expected_Goods_Shipment_25_06_2025.xlsx")
