@@ -15,6 +15,7 @@ class MainApp(QStackedWidget):
         self.login_page = LoginPage(self.show_home)
         self.home_page = HomePage(self.show_create_excel, self.show_convert_excel)
         self.create_excel_page = CreateExcelPage()
+        self.create_excel_page.go_back_requested.connect(self.show_home)
         self.convert_excel_page = ConvertExcelPage()
         self.convert_excel_page.go_back_requested.connect(self.show_home)  # ← זו השורה החדשה
         for w in (self.login_page, self.home_page, self.create_excel_page, self.convert_excel_page):
