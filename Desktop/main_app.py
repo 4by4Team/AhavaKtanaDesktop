@@ -9,7 +9,6 @@ from Desktop.convert_excel import ConvertExcelPage
 def load_styles(app):
     with open("../assets/style.qss", "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
-
 class MainApp(QStackedWidget):
     def __init__(self):
         super().__init__()
@@ -37,7 +36,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     load_styles(app)
     main_app = MainApp()
-    main_app.setWindowIcon(QIcon("../assets/logo.jpg"))  # ← שים כאן את הלוגו שלך
+    main_app.setWindowIcon(QIcon("../assets/logo.ico"))
     main_app.setWindowTitle("Excel Automation Suite – Ahavaktana Style")
     main_app.resize(900, 650)
     main_app.show()

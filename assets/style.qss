@@ -88,6 +88,7 @@ QMessageBox {
 }
 QMessageBox QLabel {
     color: #000000;
+    background-color: #ffffff;
 }
 QMessageBox QPushButton {
     background-color: #40E0D0;
