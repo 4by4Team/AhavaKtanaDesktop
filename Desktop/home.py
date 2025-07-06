@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt6.QtGui import QMovie, QCursor
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSpacerItem, QSizePolicy
+from PyQt6.QtGui import QMovie, QCursor, QFont
 from PyQt6.QtCore import Qt, QSize
 from helper.paths import resource_path
 
@@ -61,10 +61,28 @@ class HomePage(QWidget):
         buttons_layout.setSpacing(30)
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        # 🔹 כותרת ראשית
+        title_label = QLabel("GLS-DeskTop")
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setStyleSheet("font-size: 35px; font-weight: bold; color: #008080;")
+        # 🔹 כותרת משנה
+        subtitle_label = QLabel("Graphic Logic System")
+        subtitle_label.setFont(QFont("Segoe UI", 14))
+        subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        subtitle_label.setStyleSheet("font-size: 35px; font-weight: 100px; color: #666666;")
+
+        # 🔹 כפתורים
+        buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(30)
+        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
 
         btn1 = self.create_gif_button(resource_path("assets/gif/download.gif"), "Create Excel", self.switch_create)
         btn2 = self.create_gif_button(resource_path("assets/gif/copy.gif"), "Convert & Update", self.switch_convert)
 
+        main_layout.addWidget(title_label)
+        main_layout.addWidget(subtitle_label)
+        main_layout.addSpacerItem(QSpacerItem(0, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))  # ← כאן התוספת
         buttons_layout.addWidget(btn1)
         buttons_layout.addWidget(btn2)
 
