@@ -38,7 +38,7 @@ if __name__ == '__main__':
     load_styles(app)
     main_app = MainApp()
     main_app.setWindowIcon(QIcon("../assets/logo.ico"))
-    main_app.setWindowTitle("Excel Automation Suite – Ahavaktana Style")
+    main_app.setWindowTitle("GLS-DeskTop Graphic Logic System")
     main_app.resize(900, 650)
     main_app.show()
     sys.exit(app.exec())
