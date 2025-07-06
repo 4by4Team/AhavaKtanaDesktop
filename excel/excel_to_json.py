@@ -144,5 +144,3 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
 
 
 
-if __name__ == '__main__':
-    excel_to_filtered_json(r"C:\Users\USER\Downloads\Expected_Goods_Shipment_25_06_2025.xlsx")

@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QPixmap
+from helper.paths import resource_path
 
 class LoginPage(QWidget):
     def __init__(self, switch_to_main_callback):
@@ -28,7 +29,7 @@ class LoginPage(QWidget):
         container_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         logo = QLabel()
-        pixmap = QPixmap("../assets/logo.png")
+        pixmap = QPixmap(resource_path("assets/logo.png"))
         pixmap = pixmap.scaledToHeight(60, Qt.TransformationMode.SmoothTransformation)
         logo.setPixmap(pixmap)
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)

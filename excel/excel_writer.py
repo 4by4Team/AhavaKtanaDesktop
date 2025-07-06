@@ -199,26 +199,5 @@ def update_excel_column_by_dbid(
 
 
 
-def main():
-    file_path =r"C:\Users\USER\Desktop\אהבה קטנה 4X4\AhavaKtanaDesktop\excel\data\2025-06-15\orders_2025-06-15_1.xlsx"
-    dbids = [12345, 12347]  # דוגמה למזהים שברצונך לעדכן
-    column = "graphicStatus"
-    new_value = "lali"
 
-    update_excel_column_by_dbid(
-        file_path=file_path,
-        dbids_to_update=dbids,
-        column_name=column,
-        new_value=new_value,
-    )
-    update_excel_row_by_dbid(
-        file_path=file_path,
-        dbid=12345,
-        updates={
-            "graphicStatus": "Lali",
-            "orderStatus": "Lali"
-        },
-    )
 
-if __name__ == "__main__":
-    main()
