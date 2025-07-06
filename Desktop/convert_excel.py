@@ -8,8 +8,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from excel.excel_data import excel_to_dict
 from excel.excel_to_json import excel_to_filtered_json
-
-
+from helper.paths import resource_path
 class ConvertExcelPage(QWidget):
     def __init__(self):
         super().__init__()
@@ -25,7 +24,7 @@ class ConvertExcelPage(QWidget):
         self.title_label.setStyleSheet("font-size: 25px; font-weight: bold; color: #008080;")
 
         self.gif_label = QLabel()
-        self.movie = QMovie("../assets/gif/left-arrow.gif")
+        self.movie = QMovie(resource_path("assets/gif/left-arrow.gif"))
         self.gif_label.setMovie(self.movie)
         self.gif_label.setFixedSize(50, 50)
         self.movie.setScaledSize(QSize(50, 50))
@@ -34,7 +33,7 @@ class ConvertExcelPage(QWidget):
         self.movie.start()
 
         self.gif_folder=QLabel()
-        self.movie_folder = QMovie("../assets/gif/folder.gif")
+        self.movie_folder = QMovie(resource_path("assets/gif/folder.gif"))
         self.gif_folder.setMovie(self.movie_folder)
         self.gif_folder.setFixedSize(50, 50)
         self.movie_folder.setScaledSize(QSize(50, 50))
@@ -55,7 +54,7 @@ class ConvertExcelPage(QWidget):
         self.table = QTableWidget()
 
         self.update_btn = QPushButton(" Convert Excel file to Json")
-        self.update_btn.setIcon(QIcon("../assets/icons/document.png"))
+        self.update_btn.setIcon(QIcon(resource_path("assets/icons/document.png")))
         self.update_btn.clicked.connect(self.convert_to_json)
 
         layout.addLayout(top_buttons_layout)

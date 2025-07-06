@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt6.QtWidgets import QApplication, QStackedWidget
 from PyQt6.QtGui import QFont, QIcon
@@ -5,9 +6,12 @@ from Desktop.login import LoginPage
 from Desktop.home import HomePage
 from Desktop.create_excel import CreateExcelPage
 from Desktop.convert_excel import ConvertExcelPage
+from helper.paths import resource_path
+
+
 
 def load_styles(app):
-    with open("../assets/style.qss", "r", encoding="utf-8") as f:
+    with open(resource_path("assets/style.qss"), "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
 class MainApp(QStackedWidget):
     def __init__(self):
@@ -17,7 +21,7 @@ class MainApp(QStackedWidget):
         self.create_excel_page = CreateExcelPage()
         self.create_excel_page.go_back_requested.connect(self.show_home)
         self.convert_excel_page = ConvertExcelPage()
-        self.convert_excel_page.go_back_requested.connect(self.show_home)  # ← זו השורה החדשה
+        self.convert_excel_page.go_back_requested.connect(self.show_home)
         for w in (self.login_page, self.home_page, self.create_excel_page, self.convert_excel_page):
             w.setFont(QFont("Segoe UI", 11))
         self.addWidget(self.login_page)
@@ -33,11 +37,12 @@ class MainApp(QStackedWidget):
     def show_convert_excel(self):
         self.setCurrentWidget(self.convert_excel_page)
 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     load_styles(app)
     main_app = MainApp()
-    main_app.setWindowIcon(QIcon("../assets/logo.ico"))
+    main_app.setWindowIcon(QIcon(resource_path("assets/logo.ico")))
     main_app.setWindowTitle("GLS-DeskTop Graphic Logic System")
     main_app.resize(900, 650)
     main_app.show()

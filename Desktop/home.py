@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 from PyQt6.QtGui import QMovie, QCursor
 from PyQt6.QtCore import Qt, QSize
+from helper.paths import resource_path
 
 
 class HomePage(QWidget):
@@ -60,8 +61,9 @@ class HomePage(QWidget):
         buttons_layout.setSpacing(30)
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        btn1 = self.create_gif_button("../assets/gif/download.gif", "Create Excel", self.switch_create)
-        btn2 = self.create_gif_button("../assets/gif/copy.gif", "Convert & Update", self.switch_convert)
+
+        btn1 = self.create_gif_button(resource_path("assets/gif/download.gif"), "Create Excel", self.switch_create)
+        btn2 = self.create_gif_button(resource_path("assets/gif/copy.gif"), "Convert & Update", self.switch_convert)
 
         buttons_layout.addWidget(btn1)
         buttons_layout.addWidget(btn2)

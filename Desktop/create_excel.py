@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QIcon, QMovie
 from PyQt6.QtCore import Qt, QDate, QSize, pyqtSignal
+from helper.paths import resource_path
 
 
 class CreateExcelPage(QWidget):
@@ -14,7 +15,7 @@ class CreateExcelPage(QWidget):
         layout = QVBoxLayout()
 
         self.gif_label = QLabel()
-        self.movie = QMovie("../assets/gif/left-arrow.gif")
+        self.movie = QMovie(resource_path("assets/gif/left-arrow.gif"))
         self.gif_label.setMovie(self.movie)
         self.gif_label.setFixedSize(50, 50)
         self.movie.setScaledSize(QSize(50, 50))
