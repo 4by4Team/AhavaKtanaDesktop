@@ -142,5 +142,39 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
         logger.exception(f"Failed to convert Excel to filtered JSON: {e}")
         return None
 
+def convert_excel_to_json(excel_file_path: str) -> list[dict] | None:
+    try:
+        wb = load_workbook(excel_file_path)
+        ws = wb.active
+
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows or len(rows) < 2:
+            logger.warning("Excel file is empty or missing data.")
+            return None
+
+        headers = rows[0]
+        data = []
+
+        for row in rows[1:]:
+            item = {
+                header: (row[i] if row[i] is not None else "")
+                for i, header in enumerate(headers)
+                if header is not None and str(header).strip() != ""
+            }
+            data.append(item)
+
+        base_name = os.path.splitext(excel_file_path)[0]
+        output_json_path = base_name + ".json"
+        with open(output_json_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        logger.info(f"Exported raw JSON to {output_json_path}")
+        return data
+
+    except Exception as e:
+        logger.exception(f"Failed to convert Excel to JSON: {e}")
+        return None
+
+
 
 
