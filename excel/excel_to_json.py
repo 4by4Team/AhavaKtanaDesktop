@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from datetime import datetime
 from typing import Union, List, Dict, Optional
 
 from openpyxl import load_workbook
@@ -90,6 +91,21 @@ def split_item_variants(item: Dict) -> List[Dict]:
     return [item]
 
 
+def export_json_chunks(base_path: str, data: list[dict], chunk_size: int = 24) -> str:
+
+    now_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    output_dir = f"{base_path}_jsons_{now_str}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    for i in range(0, len(data), chunk_size):
+        chunk = data[i:i + chunk_size]
+        file_index = i // chunk_size + 1
+        output_path = os.path.join(output_dir, f"data_part_{file_index}.json")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(chunk, f, ensure_ascii=False, indent=2)
+        logger.info(f"Exported chunk to {output_path}")
+
+    return output_dir
 
 def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
 
@@ -134,12 +150,11 @@ def excel_to_filtered_json(excel_file_path: str) -> list[list[dict]] | None:
             final_item= split_item_variants(item)
             filtered_data.extend(final_item)
 
-        base_name = os.path.splitext(excel_file_path)[0]
-        output_json_path = base_name + ".json"
-        if output_json_path:
-            with open(output_json_path, 'w', encoding='utf-8') as f:
-                json.dump(filtered_data, f, ensure_ascii=False, indent=2)
-            logger.info(f"Exported filtered JSON to {output_json_path}")
+        if not filtered_data:
+            logger.warning("No valid data found to export.")
+            return None
+        base_dir = os.path.splitext(excel_file_path)[0]
+        export_json_chunks(base_dir, filtered_data, chunk_size=24)
 
         return filtered_data
 
