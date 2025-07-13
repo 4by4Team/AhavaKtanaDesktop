@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from excel.excel_data import excel_to_dict
-from excel.excel_to_json import excel_to_filtered_json
+from excel.excel_to_json import excel_to_filtered_json, convert_excel_to_json
 from helper.paths import resource_path
 class ConvertExcelPage(QWidget):
     def __init__(self):
@@ -53,14 +53,19 @@ class ConvertExcelPage(QWidget):
 
         self.table = QTableWidget()
 
-        self.update_btn = QPushButton(" Convert Excel file to Json")
-        self.update_btn.setIcon(QIcon(resource_path("assets/icons/document.png")))
-        self.update_btn.clicked.connect(self.convert_to_json)
+        self.convert_to_filter_btn = QPushButton(" Convert Excel file to Filter Json")
+        self.convert_to_filter_btn.setIcon(QIcon("../assets/icons/document.png"))
+        self.convert_to_filter_btn.clicked.connect(self.convert_to_filtered_json)
+
+        self.convert_to_josn_btn = QPushButton(" Convert Excel file to Json")
+        self.convert_to_josn_btn.setIcon(QIcon("../assets/icons/document.png"))
+        self.convert_to_josn_btn.clicked.connect(self.convert_to_json)
 
         layout.addLayout(top_buttons_layout)
         layout.addWidget(self.empty_label)
         layout.addWidget(self.table)
-        layout.addWidget(self.update_btn)
+        layout.addWidget(self.convert_to_filter_btn)
+        layout.addWidget(self.convert_to_josn_btn)
         self.table.hide()  # טבלה מוסתרת עד שיהיה מידע
 
         self.setLayout(layout)
@@ -100,7 +105,7 @@ class ConvertExcelPage(QWidget):
         for col in range(len(headers)):
             header.setSectionResizeMode(col, QHeaderView.ResizeMode.ResizeToContents)
 
-    def convert_to_json(self):
+    def convert_to_filtered_json(self):
         if not self.excel_path:
             QMessageBox.warning(self, "שגיאה", "לא נבחר קובץ אקסל")
             return
@@ -112,6 +117,21 @@ class ConvertExcelPage(QWidget):
                 QMessageBox.warning(self, "שגיאה", "❌ ההמרה נכשלה – לא נוצרו נתונים")
         except Exception as e:
             QMessageBox.critical(self, "שגיאה", f"שגיאה בהמרה:\n{e}")
+
+
+    def convert_to_json(self):
+        if not self.excel_path:
+            QMessageBox.warning(self, "שגיאה", "לא נבחר קובץ אקסל")
+            return
+        try:
+            data = convert_excel_to_json(self.excel_path)
+            if data:
+                QMessageBox.information(self, "הצלחה", "✅ הקובץ הומר ונשמר בהצלחה")
+            else:
+                QMessageBox.warning(self, "שגיאה", "❌ ההמרה נכשלה – לא נוצרו נתונים")
+        except Exception as e:
+            QMessageBox.critical(self, "שגיאה", f"שגיאה בהמרה:\n{e}")
+
 
     def go_back(self, event):
         self.excel_path = None
