@@ -61,20 +61,20 @@ def extract_type_details(line_item: str) -> Optional[str]:
 
 
 def extract_name_details(line_item: str) -> Optional[str]:
-
-    if line_item is None:
+    if not line_item or not isinstance(line_item, str):
         return None
 
-    match = re.search(
-        r"שם היל[ד|ד/ה|דה|דה/ה]* שיודפס על גבי המדבקות:\s*(.+?)\s*(?:\n|$)",
-        line_item,
-        re.IGNORECASE
-    )
+    cleaned = re.sub(r'\\(?=[\u0590-\u05FF])', '', line_item)
+
+    pattern = r"ש(?:ם)?\s+היל(?:ד|דה|ד/ה|ה)?\s+שיודפס\s+על\s+גבי\s+המדבקות[:\-]?\s*([^\n\r]*)"
+
+    match = re.search(pattern, cleaned, re.IGNORECASE )
     if match:
         name = match.group(1).strip()
-        return name if name else " "
+        if name:
+            return name
 
-    return " "
+    return None
 
 
 def split_item_variants(item: Dict) -> List[Dict]:
