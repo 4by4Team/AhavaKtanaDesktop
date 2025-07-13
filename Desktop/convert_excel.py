@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from excel.excel_data import excel_to_dict
-from excel.excel_to_json import excel_to_filtered_json
+from excel.excel_to_json import excel_to_filtered_json, convert_excel_to_json
 from helper.paths import resource_path
 class ConvertExcelPage(QWidget):
     def __init__(self):
@@ -124,7 +124,7 @@ class ConvertExcelPage(QWidget):
             QMessageBox.warning(self, "שגיאה", "לא נבחר קובץ אקסל")
             return
         try:
-            data = excel_to_filtered_json(self.excel_path)
+            data = convert_excel_to_json(self.excel_path)
             if data:
                 QMessageBox.information(self, "הצלחה", "✅ הקובץ הומר ונשמר בהצלחה")
             else:
