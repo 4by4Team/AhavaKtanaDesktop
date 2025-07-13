@@ -23,14 +23,14 @@ def extract_type_details(line_item: str) -> Optional[str]:
 
     line_item = line_item.strip()
 
-    # תבנית 1: מדבקות שם - חברים - סט מדבקות 52+90
     pattern1 = r"^מדבקות שם(?:\s*-\s*.+)*?\s*-\s*(?P<design>[^-]+?)\s*-\s*(?:סט\s+מדבקות\s*)?(?P<quantity>\d+(?:\+\d+)?)"
 
-    # תבנית 2: מדבקות שם קטנות במיוחד - ברקע חד קרן ללא איורים
     pattern2 = r"ברקע\s+(?P<design>.+?)\s+ללא\s+איורים"
 
-    # תבנית 3: שקופות עם הדפסה ללא איורים
     pattern3 = r"-\s*(?P<design>[^-]+?)\s+ללא\s+איורים"
+
+    pattern4 = r"^מדבקות שם\s*-\s*(?P<design>[^-]+?)\s*-\s*(?P<font>כתב\s+\S+)"
+
 
     match1 = re.search(pattern1, line_item)
     if match1:
@@ -52,6 +52,11 @@ def extract_type_details(line_item: str) -> Optional[str]:
         quantity = quantity_match.group(1) if quantity_match else "unknown"
         return f"{design}_{quantity}"
 
+    match4 = re.search(pattern4, line_item)
+    if match4:
+        design = match4.group("design").strip()
+        font = match4.group("font").strip()
+        return f"{design} {font}"
     return None
 
 
