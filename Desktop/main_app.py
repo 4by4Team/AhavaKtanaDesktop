@@ -43,7 +43,7 @@ if __name__ == '__main__':
     load_styles(app)
     main_app = MainApp()
     main_app.setWindowIcon(QIcon(resource_path("assets/logo.ico")))
-    main_app.setWindowTitle("GLS-DeskTop Graphic Logic System")
+    main_app.setWindowTitle("GLIX-Smart and easy graphics")
     main_app.resize(900, 650)
     main_app.show()
     sys.exit(app.exec())

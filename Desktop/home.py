@@ -62,11 +62,11 @@ class HomePage(QWidget):
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # 🔹 כותרת ראשית
-        title_label = QLabel("GLS-DeskTop")
+        title_label = QLabel("GLIX")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title_label.setStyleSheet("font-size: 35px; font-weight: bold; color: #008080;")
         # 🔹 כותרת משנה
-        subtitle_label = QLabel("Graphic Logic System")
+        subtitle_label = QLabel("Smart and easy graphics")
         subtitle_label.setFont(QFont("Segoe UI", 14))
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle_label.setStyleSheet("font-size: 35px; font-weight: 100px; color: #666666;")
